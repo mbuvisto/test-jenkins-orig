@@ -1,9 +1,23 @@
-pipeline {
-    agent { docker { image 'php' } }
+pipeline { 
+    agent any 
+    options {
+        skipStagesAfterUnstable()
+    }
     stages {
-        stage('build') {
+        stage('Build') { 
+            steps { 
+                sh 'make' 
+            }
+        }
+        stage('Test'){
             steps {
-                sh 'php --version'
+                sh 'make check'
+                junit 'reports/**/*.xml' 
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'make publish'
             }
         }
     }
